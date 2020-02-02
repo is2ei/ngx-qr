@@ -27,12 +27,19 @@ import ErrorCorrectLevel from 'qr.js/lib/ErrorCorrectLevel';
 export class NgxQrComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Input() value = '';
+  @Input() size = 128;
   @Input() level = 'L';
 
   @ViewChild('qr', {static: false}) canvas;
   @ViewChild('image', {static: false}) img;
 
   qrcode: any = null;
+
+  // This is *very* rough estimate of max amount of QRCode allowed to be covered.
+  // It is "wrong" in a lot of ways (area is a terrible way to estimate, it
+  // really should be number of modules covered), but if for some reason we don't
+  // get an explicit height or width, I'd rather default to something than throw.
+  DEFAULT_IMG_SCALE = 0.1;
 
   constructor() { }
 
@@ -42,6 +49,10 @@ export class NgxQrComponent implements OnInit, OnChanges, AfterViewInit {
     qrcode.make();
 
     const cells = qrcode.modules;
+
+    const numCells = cells.length;
+    const calculatedImageSettings = this.getImageSettings(cells);
+
 
     const ctx = this.canvas.nativeElement.getContext('2d');
 
@@ -53,10 +64,22 @@ export class NgxQrComponent implements OnInit, OnChanges, AfterViewInit {
       });
     });
 
+    // We're going to scale this so that the number of drawable units
+    // matches the number of cells. This avoids rounding issues, but does
+    // result in some potentially unwanted single pixel issues between
+    // blocks, only in environments that don't support Path2D.
+    const pixelRatio = window.devicePixelRatio || 1;
+    console.log('pixelRatio', pixelRatio);
+    this.canvas.nativeElement.height = this.canvas.nativeElement.width = pixelRatio;
+    const scale = (this.size / numCells) * pixelRatio;
+    ctx.scale(scale, scale);
+
     ctx.drawImage(
       this.img.nativeElement,
-      100,
-      100
+      calculatedImageSettings.x,
+      calculatedImageSettings.y,
+      calculatedImageSettings.w,
+      calculatedImageSettings.h
     );
   }
 
@@ -64,6 +87,24 @@ export class NgxQrComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+  }
+
+  getImageSettings(cells: Array<Array<boolean>>) {
+
+    const numCells = cells.length;
+    const defaultSize = Math.floor(this.size * this.DEFAULT_IMG_SCALE);
+    const scale = numCells / this.size;
+    const w = defaultSize * scale;
+    const h = defaultSize * scale;
+    const x = cells.length / 2 - w / 2;
+    const y = cells.length / 2 - h / 2;
+
+    return {
+      x,
+      y,
+      w,
+      h
+    };
   }
 
 }
