@@ -12,6 +12,7 @@ import QRCodeImpl from 'qr.js/lib/QRCode';
 import ErrorCorrectLevel from 'qr.js/lib/ErrorCorrectLevel';
 
 @Component({
+  // tslint:disable-next-line
   selector: 'qr-code',
   template: `
     <canvas #qr></canvas>
@@ -40,7 +41,7 @@ export class NgxQrComponent implements OnInit, OnChanges, AfterViewInit {
     qrcode.addData(this.value);
     qrcode.make();
 
-    let cells = qrcode.modules;
+    const cells = qrcode.modules;
 
     const ctx = this.canvas.nativeElement.getContext('2d');
 

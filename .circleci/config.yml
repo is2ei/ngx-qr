@@ -1,0 +1,28 @@
+version: 2.1
+orbs:
+  codecov: codecov/codecov@1.0.5
+jobs:
+  build:
+    working_directory: ~/ngx-qr
+
+    docker:
+      - image: circleci/node:10-browsers
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          key: my-project-{{ .Branch }}-{{ checksum "package-lock.json" }}
+      - run: npm install
+      - save_cache:
+          key: my-project-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          paths:
+            - "node_modules"
+
+      # run tests!
+      - run: npm run lint
+      - run: npm run test:lib -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+      # - run: npm run e2e -- --protractor-config=e2e/protractor-ci.conf.js
+      - codecov/upload:
+          file: ./coverage/ngx-dailymotion/lcov.info
