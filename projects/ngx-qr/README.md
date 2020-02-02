@@ -3,6 +3,7 @@
 An Angular component to generate [QR codes](https://en.wikipedia.org/wiki/QR_code).
 
 [![CircleCI](https://circleci.com/gh/is2ei/ngx-qr.svg?style=svg)](https://circleci.com/gh/is2ei/ngx-qr)
+[![codecov](https://codecov.io/gh/is2ei/ngx-qr/branch/master/graph/badge.svg)](https://codecov.io/gh/is2ei/ngx-qr)
 
 ## Pre installation
 
