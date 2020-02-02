@@ -21,7 +21,8 @@
           "options": {
             "main": "projects/ngx-qr/src/test.ts",
             "tsConfig": "projects/ngx-qr/tsconfig.spec.json",
-            "karmaConfig": "projects/ngx-qr/karma.conf.js"
+            "karmaConfig": "projects/ngx-qr/karma.conf.js",
+            "codeCoverage": true
           }
         },
         "lint": {
