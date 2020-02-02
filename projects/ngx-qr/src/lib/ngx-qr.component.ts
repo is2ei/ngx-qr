@@ -1,6 +1,5 @@
 import {
   Component,
-  OnInit,
   OnChanges,
   Input,
   ViewChild,
@@ -25,7 +24,7 @@ import ErrorCorrectLevel from 'qr.js/lib/ErrorCorrectLevel';
   `,
   styles: []
 })
-export class NgxQrComponent implements OnInit, OnChanges, AfterViewInit {
+export class NgxQrComponent implements OnChanges, AfterViewInit {
 
   @Input() value = '';
   @Input() size = 128;
@@ -50,6 +49,18 @@ export class NgxQrComponent implements OnInit, OnChanges, AfterViewInit {
   constructor() { }
 
   ngAfterViewInit() {
+    this.generateQrCode();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    this.generateQrCode();
+  }
+
+  generateQrCode() {
+
+    if (!this.canvas) {
+      return;
+    }
 
     // We'll use type===-1 to force QRCode to automatically pick the best type
     const qrcode = new QRCodeImpl(-1, ErrorCorrectLevel[this.level]);
@@ -63,7 +74,7 @@ export class NgxQrComponent implements OnInit, OnChanges, AfterViewInit {
       return;
     }
 
-    const margin = this.includeMargin? this.MARGIN_SIZE : 0;
+    const margin = this.includeMargin ? this.MARGIN_SIZE : 0;
     const numCells = cells.length + margin * 2;
     const calculatedImageSettings = this.getImageSettings(cells);
 
@@ -72,9 +83,9 @@ export class NgxQrComponent implements OnInit, OnChanges, AfterViewInit {
     // result in some potentially unwanted single pixel issues between
     // blocks, only in environments that don't support Path2D.
     const pixelRatio = window.devicePixelRatio || 1;
-    // this.canvas.nativeElement.height = this.canvas.nativeElement.width = pixelRatio;
+    this.canvas.nativeElement.height = this.canvas.nativeElement.width = this.size * pixelRatio;
     const scale = (this.size / numCells) * pixelRatio;
-    // ctx.scale(scale, scale);
+    ctx.scale(scale, scale);
 
     // Draw solid background, only paint dark modules.
     ctx.fillStyle = this.bgColor;
@@ -97,12 +108,6 @@ export class NgxQrComponent implements OnInit, OnChanges, AfterViewInit {
       calculatedImageSettings.w,
       calculatedImageSettings.h
     );
-  }
-
-  ngOnInit() {
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
   }
 
   getImageSettings(cells: Array<Array<boolean>>) {

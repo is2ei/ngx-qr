@@ -1,1 +1,7 @@
-<qr-code value="https://angular.io/"></qr-code>
+<p>This is demo site for <a href="https://github.com/is2ei/ngx-qr" target="_blank">@is2ei/ngx-qr</a>.</p>
+<p>properties</p>
+<label>
+  value:
+  <input type="text" [formControl]="name">
+</label>
+<qr-code value="{{name.value}}"></qr-code>

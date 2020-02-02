@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 
@@ -11,7 +12,8 @@ import { NgxQrModule } from 'ngx-qr';
   ],
   imports: [
     BrowserModule,
-    NgxQrModule
+    NgxQrModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

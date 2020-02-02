@@ -6,15 +6,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["main"], {
   /***/
-  "../../dist/ngx-qr/fesm2015/ngx-qr.js":
-  /*!*******************************************************************************!*\
-    !*** /Users/horie/src/github.com/is2ei/ngx-qr/dist/ngx-qr/fesm2015/ngx-qr.js ***!
-    \*******************************************************************************/
+  "../../dist/ngx-qr/fesm2015/is2ei-ngx-qr.js":
+  /*!*************************************************************************************!*\
+    !*** /Users/horie/src/github.com/is2ei/ngx-qr/dist/ngx-qr/fesm2015/is2ei-ngx-qr.js ***!
+    \*************************************************************************************/
 
   /*! exports provided: NgxQrComponent, NgxQrModule, NgxQrService */
 
   /***/
-  function distNgxQrFesm2015NgxQrJs(module, __webpack_exports__, __webpack_require__) {
+  function distNgxQrFesm2015Is2eiNgxQrJs(module, __webpack_exports__, __webpack_require__) {
     "use strict";
 
     __webpack_require__.r(__webpack_exports__);
@@ -111,8 +111,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         _classCallCheck(this, NgxQrComponent);
 
         this.value = '';
+        this.size = 128;
         this.level = 'L';
+        this.bgColor = '#FFFFFF';
+        this.fgColor = '#000000';
+        this.includeMargin = false;
         this.qrcode = null;
+        this.MARGIN_SIZE = 4; // This is *very* rough estimate of max amount of QRCode allowed to be covered.
+        // It is "wrong" in a lot of ways (area is a terrible way to estimate, it
+        // really should be number of modules covered), but if for some reason we don't
+        // get an explicit height or width, I'd rather default to something than throw.
+
+        this.DEFAULT_IMG_SCALE = 0.1;
       }
       /**
        * @return {?}
@@ -122,16 +132,71 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(NgxQrComponent, [{
         key: "ngAfterViewInit",
         value: function ngAfterViewInit() {
+          this.generateQrCode();
+        }
+        /**
+         * @param {?} changes
+         * @return {?}
+         */
+
+      }, {
+        key: "ngOnChanges",
+        value: function ngOnChanges(changes) {
+          this.generateQrCode();
+        }
+        /**
+         * @return {?}
+         */
+
+      }, {
+        key: "generateQrCode",
+        value: function generateQrCode() {
+          if (!this.canvas) {
+            return;
+          } // We'll use type===-1 to force QRCode to automatically pick the best type
+
           /** @type {?} */
+
+
           var qrcode = new qr_js_lib_QRCode__WEBPACK_IMPORTED_MODULE_1___default.a(-1, qr_js_lib_ErrorCorrectLevel__WEBPACK_IMPORTED_MODULE_2___default.a[this.level]);
           qrcode.addData(this.value);
           qrcode.make();
           /** @type {?} */
 
-          var cells = qrcode.modules;
+          var ctx = this.canvas.nativeElement.getContext('2d');
           /** @type {?} */
 
-          var ctx = this.canvas.nativeElement.getContext('2d');
+          var cells = qrcode.modules;
+
+          if (!cells) {
+            return;
+          }
+          /** @type {?} */
+
+
+          var margin = this.includeMargin ? this.MARGIN_SIZE : 0;
+          /** @type {?} */
+
+          var numCells = cells.length + margin * 2;
+          /** @type {?} */
+
+          var calculatedImageSettings = this.getImageSettings(cells); // We're going to scale this so that the number of drawable units
+          // matches the number of cells. This avoids rounding issues, but does
+          // result in some potentially unwanted single pixel issues between
+          // blocks, only in environments that don't support Path2D.
+
+          /** @type {?} */
+
+          var pixelRatio = window.devicePixelRatio || 1;
+          this.canvas.nativeElement.height = this.canvas.nativeElement.width = this.size * pixelRatio;
+          /** @type {?} */
+
+          var scale = this.size / numCells * pixelRatio;
+          ctx.scale(scale, scale); // Draw solid background, only paint dark modules.
+
+          ctx.fillStyle = this.bgColor;
+          ctx.fillRect(0, 0, numCells, numCells);
+          ctx.fillStyle = this.fgColor;
           cells.forEach(
           /**
           * @param {?} row
@@ -151,23 +216,46 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               }
             });
           });
-          ctx.drawImage(this.img.nativeElement, 100, 100);
+          ctx.drawImage(this.img.nativeElement, calculatedImageSettings.x, calculatedImageSettings.y, calculatedImageSettings.w, calculatedImageSettings.h);
         }
         /**
+         * @param {?} cells
          * @return {?}
          */
 
       }, {
-        key: "ngOnInit",
-        value: function ngOnInit() {}
-        /**
-         * @param {?} changes
-         * @return {?}
-         */
+        key: "getImageSettings",
+        value: function getImageSettings(cells) {
+          /** @type {?} */
+          var margin = this.includeMargin ? this.MARGIN_SIZE : 0;
+          /** @type {?} */
 
-      }, {
-        key: "ngOnChanges",
-        value: function ngOnChanges(changes) {}
+          var numCells = cells.length + margin * 2;
+          /** @type {?} */
+
+          var defaultSize = Math.floor(this.size * this.DEFAULT_IMG_SCALE);
+          /** @type {?} */
+
+          var scale = numCells / this.size;
+          /** @type {?} */
+
+          var w = defaultSize * scale;
+          /** @type {?} */
+
+          var h = defaultSize * scale;
+          /** @type {?} */
+
+          var x = cells.length / 2 - w / 2;
+          /** @type {?} */
+
+          var y = cells.length / 2 - h / 2;
+          return {
+            x: x,
+            y: y,
+            w: w,
+            h: h
+          };
+        }
       }]);
 
       return NgxQrComponent;
@@ -176,6 +264,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     NgxQrComponent.decorators = [{
       type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"],
       args: [{
+        // tslint:disable-next-line
         selector: 'qr-code',
         template: "\n    <canvas #qr></canvas>\n    <img\n      #image\n      src=\"https://is2ei.github.io/ngx-qr/favicon.ico\"\n      style=\"display:none\"\n    />\n  "
       }]
@@ -190,7 +279,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       value: [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
       }],
+      size: [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
+      }],
       level: [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
+      }],
+      bgColor: [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
+      }],
+      fgColor: [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
+      }],
+      includeMargin: [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
       }],
       canvas: [{
@@ -235,10 +336,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     /**
      * @fileoverview added by tsickle
-     * Generated from: ngx-qr.ts
+     * Generated from: is2ei-ngx-qr.ts
      * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
      */
-    //# sourceMappingURL=ngx-qr.js.map
+    //# sourceMappingURL=is2ei-ngx-qr.js.map
 
     /***/
   },
@@ -259,7 +360,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony default export */
 
 
-    __webpack_exports__["default"] = "<qr-code value=\"https://angular.io/\"></qr-code>\n";
+    __webpack_exports__["default"] = "<p>This is demo site for <a href=\"https://github.com/is2ei/ngx-qr\" target=\"_blank\">@is2ei/ngx-qr</a>.</p>\n<p>properties</p>\n<label>\n  value:\n  <input type=\"text\" [formControl]=\"name\">\n</label>\n<qr-code value=\"{{name.value}}\"></qr-code>\n";
     /***/
   },
 
@@ -902,12 +1003,31 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
     /*! @angular/core */
     "../../node_modules/@angular/core/fesm2015/core.js");
+    /* harmony import */
 
-    var AppComponent = function AppComponent() {
-      _classCallCheck(this, AppComponent);
 
-      this.title = 'demo';
-    };
+    var _angular_forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
+    /*! @angular/forms */
+    "../../node_modules/@angular/forms/fesm2015/forms.js");
+
+    var AppComponent =
+    /*#__PURE__*/
+    function () {
+      function AppComponent() {
+        _classCallCheck(this, AppComponent);
+
+        this.name = new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"]('');
+      }
+
+      _createClass(AppComponent, [{
+        key: "ngOnInit",
+        value: function ngOnInit() {
+          this.name.setValue('https://angular.io/');
+        }
+      }]);
+
+      return AppComponent;
+    }();
 
     AppComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
       selector: 'app-root',
@@ -961,25 +1081,31 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony import */
 
 
-    var _app_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
+    var _angular_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
+    /*! @angular/forms */
+    "../../node_modules/@angular/forms/fesm2015/forms.js");
+    /* harmony import */
+
+
+    var _app_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
     /*! ./app.component */
     "./src/app/app.component.ts");
     /* harmony import */
 
 
-    var ngx_qr__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
+    var ngx_qr__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
     /*! ngx-qr */
-    "../../dist/ngx-qr/fesm2015/ngx-qr.js");
+    "../../dist/ngx-qr/fesm2015/is2ei-ngx-qr.js");
 
     var AppModule = function AppModule() {
       _classCallCheck(this, AppModule);
     };
 
     AppModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["NgModule"])({
-      declarations: [_app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"]],
-      imports: [_angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"], ngx_qr__WEBPACK_IMPORTED_MODULE_4__["NgxQrModule"]],
+      declarations: [_app_component__WEBPACK_IMPORTED_MODULE_4__["AppComponent"]],
+      imports: [_angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"], ngx_qr__WEBPACK_IMPORTED_MODULE_5__["NgxQrModule"], _angular_forms__WEBPACK_IMPORTED_MODULE_3__["ReactiveFormsModule"]],
       providers: [],
-      bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"]]
+      bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_4__["AppComponent"]]
     })], AppModule);
     /***/
   },

@@ -1,9 +1,9 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["main"],{
 
-/***/ "../../dist/ngx-qr/fesm2015/ngx-qr.js":
-/*!*******************************************************************************!*\
-  !*** /Users/horie/src/github.com/is2ei/ngx-qr/dist/ngx-qr/fesm2015/ngx-qr.js ***!
-  \*******************************************************************************/
+/***/ "../../dist/ngx-qr/fesm2015/is2ei-ngx-qr.js":
+/*!*************************************************************************************!*\
+  !*** /Users/horie/src/github.com/is2ei/ngx-qr/dist/ngx-qr/fesm2015/is2ei-ngx-qr.js ***!
+  \*************************************************************************************/
 /*! exports provided: NgxQrComponent, NgxQrModule, NgxQrService */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -46,21 +46,71 @@ NgxQrService.ctorParameters = () => [];
 class NgxQrComponent {
     constructor() {
         this.value = '';
+        this.size = 128;
         this.level = 'L';
+        this.bgColor = '#FFFFFF';
+        this.fgColor = '#000000';
+        this.includeMargin = false;
         this.qrcode = null;
+        this.MARGIN_SIZE = 4;
+        // This is *very* rough estimate of max amount of QRCode allowed to be covered.
+        // It is "wrong" in a lot of ways (area is a terrible way to estimate, it
+        // really should be number of modules covered), but if for some reason we don't
+        // get an explicit height or width, I'd rather default to something than throw.
+        this.DEFAULT_IMG_SCALE = 0.1;
     }
     /**
      * @return {?}
      */
     ngAfterViewInit() {
+        this.generateQrCode();
+    }
+    /**
+     * @param {?} changes
+     * @return {?}
+     */
+    ngOnChanges(changes) {
+        this.generateQrCode();
+    }
+    /**
+     * @return {?}
+     */
+    generateQrCode() {
+        if (!this.canvas) {
+            return;
+        }
+        // We'll use type===-1 to force QRCode to automatically pick the best type
         /** @type {?} */
         const qrcode = new qr_js_lib_QRCode__WEBPACK_IMPORTED_MODULE_1___default.a(-1, qr_js_lib_ErrorCorrectLevel__WEBPACK_IMPORTED_MODULE_2___default.a[this.level]);
         qrcode.addData(this.value);
         qrcode.make();
         /** @type {?} */
-        let cells = qrcode.modules;
-        /** @type {?} */
         const ctx = this.canvas.nativeElement.getContext('2d');
+        /** @type {?} */
+        const cells = qrcode.modules;
+        if (!cells) {
+            return;
+        }
+        /** @type {?} */
+        const margin = this.includeMargin ? this.MARGIN_SIZE : 0;
+        /** @type {?} */
+        const numCells = cells.length + margin * 2;
+        /** @type {?} */
+        const calculatedImageSettings = this.getImageSettings(cells);
+        // We're going to scale this so that the number of drawable units
+        // matches the number of cells. This avoids rounding issues, but does
+        // result in some potentially unwanted single pixel issues between
+        // blocks, only in environments that don't support Path2D.
+        /** @type {?} */
+        const pixelRatio = window.devicePixelRatio || 1;
+        this.canvas.nativeElement.height = this.canvas.nativeElement.width = this.size * pixelRatio;
+        /** @type {?} */
+        const scale = (this.size / numCells) * pixelRatio;
+        ctx.scale(scale, scale);
+        // Draw solid background, only paint dark modules.
+        ctx.fillStyle = this.bgColor;
+        ctx.fillRect(0, 0, numCells, numCells);
+        ctx.fillStyle = this.fgColor;
         cells.forEach((/**
          * @param {?} row
          * @param {?} rdx
@@ -78,22 +128,40 @@ class NgxQrComponent {
                 }
             }));
         }));
-        ctx.drawImage(this.img.nativeElement, 100, 100);
+        ctx.drawImage(this.img.nativeElement, calculatedImageSettings.x, calculatedImageSettings.y, calculatedImageSettings.w, calculatedImageSettings.h);
     }
     /**
+     * @param {?} cells
      * @return {?}
      */
-    ngOnInit() {
-    }
-    /**
-     * @param {?} changes
-     * @return {?}
-     */
-    ngOnChanges(changes) {
+    getImageSettings(cells) {
+        /** @type {?} */
+        const margin = this.includeMargin ? this.MARGIN_SIZE : 0;
+        /** @type {?} */
+        const numCells = cells.length + margin * 2;
+        /** @type {?} */
+        const defaultSize = Math.floor(this.size * this.DEFAULT_IMG_SCALE);
+        /** @type {?} */
+        const scale = numCells / this.size;
+        /** @type {?} */
+        const w = defaultSize * scale;
+        /** @type {?} */
+        const h = defaultSize * scale;
+        /** @type {?} */
+        const x = cells.length / 2 - w / 2;
+        /** @type {?} */
+        const y = cells.length / 2 - h / 2;
+        return {
+            x,
+            y,
+            w,
+            h
+        };
     }
 }
 NgxQrComponent.decorators = [
     { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"], args: [{
+                // tslint:disable-next-line
                 selector: 'qr-code',
                 template: `
     <canvas #qr></canvas>
@@ -109,7 +177,11 @@ NgxQrComponent.decorators = [
 NgxQrComponent.ctorParameters = () => [];
 NgxQrComponent.propDecorators = {
     value: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
+    size: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
     level: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
+    bgColor: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
+    fgColor: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
+    includeMargin: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
     canvas: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewChild"], args: ['qr', { static: false },] }],
     img: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewChild"], args: ['image', { static: false },] }]
 };
@@ -138,12 +210,12 @@ NgxQrModule.decorators = [
 
 /**
  * @fileoverview added by tsickle
- * Generated from: ngx-qr.ts
+ * Generated from: is2ei-ngx-qr.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 
 
-//# sourceMappingURL=ngx-qr.js.map
+//# sourceMappingURL=is2ei-ngx-qr.js.map
 
 
 /***/ }),
@@ -157,7 +229,7 @@ NgxQrModule.decorators = [
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<qr-code value=\"https://angular.io/\"></qr-code>\n");
+/* harmony default export */ __webpack_exports__["default"] = ("<p>This is demo site for <a href=\"https://github.com/is2ei/ngx-qr\" target=\"_blank\">@is2ei/ngx-qr</a>.</p>\n<p>properties</p>\n<label>\n  value:\n  <input type=\"text\" [formControl]=\"name\">\n</label>\n<qr-code value=\"{{name.value}}\"></qr-code>\n");
 
 /***/ }),
 
@@ -438,11 +510,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AppComponent", function() { return AppComponent; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "../../node_modules/@angular/core/fesm2015/core.js");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/forms */ "../../node_modules/@angular/forms/fesm2015/forms.js");
+
 
 
 let AppComponent = class AppComponent {
     constructor() {
-        this.title = 'demo';
+        this.name = new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"]('');
+    }
+    ngOnInit() {
+        this.name.setValue('https://angular.io/');
     }
 };
 AppComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
@@ -470,8 +547,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/platform-browser */ "../../node_modules/@angular/platform-browser/fesm2015/platform-browser.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ "../../node_modules/@angular/core/fesm2015/core.js");
-/* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./app.component */ "./src/app/app.component.ts");
-/* harmony import */ var ngx_qr__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ngx-qr */ "../../dist/ngx-qr/fesm2015/ngx-qr.js");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/forms */ "../../node_modules/@angular/forms/fesm2015/forms.js");
+/* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./app.component */ "./src/app/app.component.ts");
+/* harmony import */ var ngx_qr__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ngx-qr */ "../../dist/ngx-qr/fesm2015/is2ei-ngx-qr.js");
+
 
 
 
@@ -482,14 +561,15 @@ let AppModule = class AppModule {
 AppModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["NgModule"])({
         declarations: [
-            _app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"]
+            _app_component__WEBPACK_IMPORTED_MODULE_4__["AppComponent"]
         ],
         imports: [
             _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"],
-            ngx_qr__WEBPACK_IMPORTED_MODULE_4__["NgxQrModule"]
+            ngx_qr__WEBPACK_IMPORTED_MODULE_5__["NgxQrModule"],
+            _angular_forms__WEBPACK_IMPORTED_MODULE_3__["ReactiveFormsModule"]
         ],
         providers: [],
-        bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"]]
+        bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_4__["AppComponent"]]
     })
 ], AppModule);
 
