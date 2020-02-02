@@ -5,7 +5,8 @@ import {
   Input,
   ViewChild,
   SimpleChanges,
-  AfterViewInit
+  AfterViewInit,
+  ElementRef
 } from '@angular/core';
 
 import QRCodeImpl from 'qr.js/lib/QRCode';
@@ -29,11 +30,16 @@ export class NgxQrComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() value = '';
   @Input() size = 128;
   @Input() level = 'L';
+  @Input() bgColor = '#FFFFFF';
+  @Input() fgColor = '#000000';
+  @Input() includeMargin = false;
 
-  @ViewChild('qr', {static: false}) canvas;
-  @ViewChild('image', {static: false}) img;
+  @ViewChild('qr', {static: false}) canvas: ElementRef<HTMLCanvasElement>;
+  @ViewChild('image', {static: false}) img: ElementRef<HTMLImageElement>;
 
   qrcode: any = null;
+
+  MARGIN_SIZE = 4;
 
   // This is *very* rough estimate of max amount of QRCode allowed to be covered.
   // It is "wrong" in a lot of ways (area is a terrible way to estimate, it
@@ -44,17 +50,37 @@ export class NgxQrComponent implements OnInit, OnChanges, AfterViewInit {
   constructor() { }
 
   ngAfterViewInit() {
+
+    // We'll use type===-1 to force QRCode to automatically pick the best type
     const qrcode = new QRCodeImpl(-1, ErrorCorrectLevel[this.level]);
     qrcode.addData(this.value);
     qrcode.make();
 
-    const cells = qrcode.modules;
+    const ctx = this.canvas.nativeElement.getContext('2d');
 
-    const numCells = cells.length;
+    const cells = qrcode.modules;
+    if (!cells) {
+      return;
+    }
+
+    const margin = this.includeMargin? this.MARGIN_SIZE : 0;
+    const numCells = cells.length + margin * 2;
     const calculatedImageSettings = this.getImageSettings(cells);
 
+    // We're going to scale this so that the number of drawable units
+    // matches the number of cells. This avoids rounding issues, but does
+    // result in some potentially unwanted single pixel issues between
+    // blocks, only in environments that don't support Path2D.
+    const pixelRatio = window.devicePixelRatio || 1;
+    // this.canvas.nativeElement.height = this.canvas.nativeElement.width = pixelRatio;
+    const scale = (this.size / numCells) * pixelRatio;
+    // ctx.scale(scale, scale);
 
-    const ctx = this.canvas.nativeElement.getContext('2d');
+    // Draw solid background, only paint dark modules.
+    ctx.fillStyle = this.bgColor;
+    ctx.fillRect(0, 0, numCells, numCells);
+
+    ctx.fillStyle = this.fgColor;
 
     cells.forEach((row, rdx) => {
       row.forEach((cell, cdx) => {
@@ -63,16 +89,6 @@ export class NgxQrComponent implements OnInit, OnChanges, AfterViewInit {
         }
       });
     });
-
-    // We're going to scale this so that the number of drawable units
-    // matches the number of cells. This avoids rounding issues, but does
-    // result in some potentially unwanted single pixel issues between
-    // blocks, only in environments that don't support Path2D.
-    const pixelRatio = window.devicePixelRatio || 1;
-    console.log('pixelRatio', pixelRatio);
-    this.canvas.nativeElement.height = this.canvas.nativeElement.width = pixelRatio;
-    const scale = (this.size / numCells) * pixelRatio;
-    ctx.scale(scale, scale);
 
     ctx.drawImage(
       this.img.nativeElement,
@@ -91,7 +107,8 @@ export class NgxQrComponent implements OnInit, OnChanges, AfterViewInit {
 
   getImageSettings(cells: Array<Array<boolean>>) {
 
-    const numCells = cells.length;
+    const margin = this.includeMargin ? this.MARGIN_SIZE : 0;
+    const numCells = cells.length + margin * 2;
     const defaultSize = Math.floor(this.size * this.DEFAULT_IMG_SCALE);
     const scale = numCells / this.size;
     const w = defaultSize * scale;
