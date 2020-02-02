@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'lib-ngx-qr',
+  selector: 'qr-code',
   template: `
     <p>
       ngx-qr works!
