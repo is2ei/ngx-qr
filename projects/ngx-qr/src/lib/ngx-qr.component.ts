@@ -58,7 +58,7 @@ export class NgxQrComponent implements OnChanges, AfterViewInit {
 
   generateQrCode() {
 
-    if (!this.canvas) {
+    if (!this.canvas || !this.img) {
       return;
     }
 

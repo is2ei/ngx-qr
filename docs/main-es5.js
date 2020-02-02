@@ -151,7 +151,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "generateQrCode",
         value: function generateQrCode() {
-          if (!this.canvas) {
+          if (!this.canvas || !this.img) {
             return;
           } // We'll use type===-1 to force QRCode to automatically pick the best type
 

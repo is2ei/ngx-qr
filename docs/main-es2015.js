@@ -76,7 +76,7 @@ class NgxQrComponent {
      * @return {?}
      */
     generateQrCode() {
-        if (!this.canvas) {
+        if (!this.canvas || !this.img) {
             return;
         }
         // We'll use type===-1 to force QRCode to automatically pick the best type
