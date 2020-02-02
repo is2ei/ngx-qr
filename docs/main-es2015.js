@@ -1,5 +1,96 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["main"],{
 
+/***/ "../../dist/ngx-qr/fesm2015/ngx-qr.js":
+/*!*******************************************************************************!*\
+  !*** /Users/horie/src/github.com/is2ei/ngx-qr/dist/ngx-qr/fesm2015/ngx-qr.js ***!
+  \*******************************************************************************/
+/*! exports provided: NgxQrComponent, NgxQrModule, NgxQrService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NgxQrComponent", function() { return NgxQrComponent; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NgxQrModule", function() { return NgxQrModule; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NgxQrService", function() { return NgxQrService; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "../../node_modules/@angular/core/fesm2015/core.js");
+
+
+/**
+ * @fileoverview added by tsickle
+ * Generated from: lib/ngx-qr.service.ts
+ * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+class NgxQrService {
+    constructor() { }
+}
+NgxQrService.decorators = [
+    { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"], args: [{
+                providedIn: 'root'
+            },] }
+];
+/** @nocollapse */
+NgxQrService.ctorParameters = () => [];
+/** @nocollapse */ NgxQrService.ngInjectableDef = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"])({ factory: function NgxQrService_Factory() { return new NgxQrService(); }, token: NgxQrService, providedIn: "root" });
+
+/**
+ * @fileoverview added by tsickle
+ * Generated from: lib/ngx-qr.component.ts
+ * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+class NgxQrComponent {
+    constructor() { }
+    /**
+     * @return {?}
+     */
+    ngOnInit() {
+    }
+}
+NgxQrComponent.decorators = [
+    { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"], args: [{
+                selector: 'lib-ngx-qr',
+                template: `
+    <p>
+      ngx-qr works!
+    </p>
+  `
+            }] }
+];
+/** @nocollapse */
+NgxQrComponent.ctorParameters = () => [];
+
+/**
+ * @fileoverview added by tsickle
+ * Generated from: lib/ngx-qr.module.ts
+ * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+class NgxQrModule {
+}
+NgxQrModule.decorators = [
+    { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["NgModule"], args: [{
+                declarations: [NgxQrComponent],
+                imports: [],
+                exports: [NgxQrComponent]
+            },] }
+];
+
+/**
+ * @fileoverview added by tsickle
+ * Generated from: public-api.ts
+ * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+
+/**
+ * @fileoverview added by tsickle
+ * Generated from: ngx-qr.ts
+ * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+
+
+//# sourceMappingURL=ngx-qr.js.map
+
+
+/***/ }),
+
 /***/ "../../node_modules/raw-loader/dist/cjs.js!./src/app/app.component.html":
 /*!*****************************************************************************************************************!*\
   !*** /Users/horie/src/github.com/is2ei/ngx-qr/node_modules/raw-loader/dist/cjs.js!./src/app/app.component.html ***!
@@ -323,6 +414,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/platform-browser */ "../../node_modules/@angular/platform-browser/fesm2015/platform-browser.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ "../../node_modules/@angular/core/fesm2015/core.js");
 /* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./app.component */ "./src/app/app.component.ts");
+/* harmony import */ var ngx_qr__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ngx-qr */ "../../dist/ngx-qr/fesm2015/ngx-qr.js");
+
 
 
 
@@ -335,7 +428,8 @@ AppModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
             _app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"]
         ],
         imports: [
-            _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"]
+            _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"],
+            ngx_qr__WEBPACK_IMPORTED_MODULE_4__["NgxQrModule"]
         ],
         providers: [],
         bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"]]
