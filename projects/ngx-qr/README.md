@@ -2,6 +2,8 @@
 
 An Angular component to generate [QR codes](https://en.wikipedia.org/wiki/QR_code).
 
+[![CircleCI](https://circleci.com/gh/is2ei/ngx-qr.svg?style=svg)](https://circleci.com/gh/is2ei/ngx-qr)
+
 ## Pre installation
 
 Add Github Packages settings.
