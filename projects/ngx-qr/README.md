@@ -1,24 +1,45 @@
 # NgxQr
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.2.14.
+An Angular component to generate [QR codes](https://en.wikipedia.org/wiki/QR_code).
 
-## Code scaffolding
+## Installation
 
-Run `ng generate component component-name --project ngx-qr` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project ngx-qr`.
-> Note: Don't forget to add `--project ngx-qr` or else it will be added to the default project in your `angular.json` file. 
+```
+$ npm i ngx-qr
+```
 
-## Build
+## Usage
 
-Run `ng build ngx-qr` to build the project. The build artifacts will be stored in the `dist/` directory.
+```typescript
+// app.component.ts
+import { NgxQrModule } from 'ngx-qr'
+```
 
-## Publishing
+```html
+<!-- app.component.html -->
+<qr-code value="https://angular.io/"></qr-code>
+```
 
-After building your library with `ng build ngx-qr`, go to the dist folder `cd dist/ngx-qr` and run `npm publish`.
+## Properties
 
-## Running unit tests
+property  | type                 | default value
+----------|----------------------|--------------
+`value`   | `string`             |
+`renderAs`| `string` (`'canvas' 'svg'`) | `'canvas'`
+`size`    | `number`             | `128`
+`bgColor` | `string` (CSS color) | `"#FFFFFF"`
+`fgColor` | `string` (CSS color) | `"#000000"`
+`level`   | `string` (`'L' 'M' 'Q' 'H'`)            | `'L'`
+`includeMargin` | `boolean`      | `false`
+`imageSettings` | `object` (see below) |
 
-Run `ng test ngx-qr` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### `imageSettings`
 
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+field      | type                 | default value
+-----------|----------------------|--------------
+`src`      | `string`             |
+`x`        | `number`             | none, will center
+`y`        | `number`             | none, will center
+`height`   | `number`             | 10% of `size`
+`width`    | `number`             | 10% of `size`
+`excavate` | `boolean`            | `false`
