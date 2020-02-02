@@ -13,6 +13,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NgxQrModule", function() { return NgxQrModule; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NgxQrService", function() { return NgxQrService; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "../../node_modules/@angular/core/fesm2015/core.js");
+/* harmony import */ var qr_js_lib_QRCode__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! qr.js/lib/QRCode */ "../../node_modules/qr.js/lib/QRCode.js");
+/* harmony import */ var qr_js_lib_QRCode__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(qr_js_lib_QRCode__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var qr_js_lib_ErrorCorrectLevel__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! qr.js/lib/ErrorCorrectLevel */ "../../node_modules/qr.js/lib/ErrorCorrectLevel.js");
+/* harmony import */ var qr_js_lib_ErrorCorrectLevel__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(qr_js_lib_ErrorCorrectLevel__WEBPACK_IMPORTED_MODULE_2__);
+
+
 
 
 /**
@@ -38,25 +44,76 @@ NgxQrService.ctorParameters = () => [];
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 class NgxQrComponent {
-    constructor() { }
+    constructor() {
+        this.value = '';
+        this.level = 'L';
+        this.qrcode = null;
+    }
+    /**
+     * @return {?}
+     */
+    ngAfterViewInit() {
+        /** @type {?} */
+        const qrcode = new qr_js_lib_QRCode__WEBPACK_IMPORTED_MODULE_1___default.a(-1, qr_js_lib_ErrorCorrectLevel__WEBPACK_IMPORTED_MODULE_2___default.a[this.level]);
+        qrcode.addData(this.value);
+        qrcode.make();
+        /** @type {?} */
+        let cells = qrcode.modules;
+        /** @type {?} */
+        const ctx = this.canvas.nativeElement.getContext('2d');
+        cells.forEach((/**
+         * @param {?} row
+         * @param {?} rdx
+         * @return {?}
+         */
+        (row, rdx) => {
+            row.forEach((/**
+             * @param {?} cell
+             * @param {?} cdx
+             * @return {?}
+             */
+            (cell, cdx) => {
+                if (cell) {
+                    ctx.fillRect(cdx, rdx, 1, 1);
+                }
+            }));
+        }));
+        ctx.drawImage(this.img.nativeElement, 100, 100);
+    }
     /**
      * @return {?}
      */
     ngOnInit() {
+    }
+    /**
+     * @param {?} changes
+     * @return {?}
+     */
+    ngOnChanges(changes) {
     }
 }
 NgxQrComponent.decorators = [
     { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"], args: [{
                 selector: 'qr-code',
                 template: `
-    <p>
-      ngx-qr works!
-    </p>
+    <canvas #qr></canvas>
+    <img
+      #image
+      src="https://is2ei.github.io/ngx-qr/favicon.ico"
+      style="display:none"
+    />
   `
             }] }
 ];
 /** @nocollapse */
 NgxQrComponent.ctorParameters = () => [];
+NgxQrComponent.propDecorators = {
+    value: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
+    level: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
+    canvas: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewChild"], args: ['qr', { static: false },] }],
+    img: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewChild"], args: ['image', { static: false },] }]
+};
+if (false) {}
 
 /**
  * @fileoverview added by tsickle

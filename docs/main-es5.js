@@ -42,6 +42,30 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(
     /*! @angular/core */
     "../../node_modules/@angular/core/fesm2015/core.js");
+    /* harmony import */
+
+
+    var qr_js_lib_QRCode__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
+    /*! qr.js/lib/QRCode */
+    "../../node_modules/qr.js/lib/QRCode.js");
+    /* harmony import */
+
+
+    var qr_js_lib_QRCode__WEBPACK_IMPORTED_MODULE_1___default =
+    /*#__PURE__*/
+    __webpack_require__.n(qr_js_lib_QRCode__WEBPACK_IMPORTED_MODULE_1__);
+    /* harmony import */
+
+
+    var qr_js_lib_ErrorCorrectLevel__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
+    /*! qr.js/lib/ErrorCorrectLevel */
+    "../../node_modules/qr.js/lib/ErrorCorrectLevel.js");
+    /* harmony import */
+
+
+    var qr_js_lib_ErrorCorrectLevel__WEBPACK_IMPORTED_MODULE_2___default =
+    /*#__PURE__*/
+    __webpack_require__.n(qr_js_lib_ErrorCorrectLevel__WEBPACK_IMPORTED_MODULE_2__);
     /**
      * @fileoverview added by tsickle
      * Generated from: lib/ngx-qr.service.ts
@@ -85,6 +109,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     function () {
       function NgxQrComponent() {
         _classCallCheck(this, NgxQrComponent);
+
+        this.value = '';
+        this.level = 'L';
+        this.qrcode = null;
       }
       /**
        * @return {?}
@@ -92,8 +120,54 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
       _createClass(NgxQrComponent, [{
+        key: "ngAfterViewInit",
+        value: function ngAfterViewInit() {
+          /** @type {?} */
+          var qrcode = new qr_js_lib_QRCode__WEBPACK_IMPORTED_MODULE_1___default.a(-1, qr_js_lib_ErrorCorrectLevel__WEBPACK_IMPORTED_MODULE_2___default.a[this.level]);
+          qrcode.addData(this.value);
+          qrcode.make();
+          /** @type {?} */
+
+          var cells = qrcode.modules;
+          /** @type {?} */
+
+          var ctx = this.canvas.nativeElement.getContext('2d');
+          cells.forEach(
+          /**
+          * @param {?} row
+          * @param {?} rdx
+          * @return {?}
+          */
+          function (row, rdx) {
+            row.forEach(
+            /**
+            * @param {?} cell
+            * @param {?} cdx
+            * @return {?}
+            */
+            function (cell, cdx) {
+              if (cell) {
+                ctx.fillRect(cdx, rdx, 1, 1);
+              }
+            });
+          });
+          ctx.drawImage(this.img.nativeElement, 100, 100);
+        }
+        /**
+         * @return {?}
+         */
+
+      }, {
         key: "ngOnInit",
         value: function ngOnInit() {}
+        /**
+         * @param {?} changes
+         * @return {?}
+         */
+
+      }, {
+        key: "ngOnChanges",
+        value: function ngOnChanges(changes) {}
       }]);
 
       return NgxQrComponent;
@@ -103,7 +177,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"],
       args: [{
         selector: 'qr-code',
-        template: "\n    <p>\n      ngx-qr works!\n    </p>\n  "
+        template: "\n    <canvas #qr></canvas>\n    <img\n      #image\n      src=\"https://is2ei.github.io/ngx-qr/favicon.ico\"\n      style=\"display:none\"\n    />\n  "
       }]
     }];
     /** @nocollapse */
@@ -111,6 +185,29 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     NgxQrComponent.ctorParameters = function () {
       return [];
     };
+
+    NgxQrComponent.propDecorators = {
+      value: [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
+      }],
+      level: [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
+      }],
+      canvas: [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewChild"],
+        args: ['qr', {
+          "static": false
+        }]
+      }],
+      img: [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewChild"],
+        args: ['image', {
+          "static": false
+        }]
+      }]
+    };
+
+    if (false) {}
     /**
      * @fileoverview added by tsickle
      * Generated from: lib/ngx-qr.module.ts
