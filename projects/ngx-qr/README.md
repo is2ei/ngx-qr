@@ -2,10 +2,16 @@
 
 An Angular component to generate [QR codes](https://en.wikipedia.org/wiki/QR_code).
 
+## Pre installation
+
+Add Github Packages settings.
+See for more detail [here](https://help.github.com/en/github/managing-packages-with-github-packages/configuring-npm-for-use-with-github-packages#installing-a-package)
+
+
 ## Installation
 
 ```
-$ npm i ngx-qr
+$ npm install @is2ei/ngx-qr
 ```
 
 ## Usage
